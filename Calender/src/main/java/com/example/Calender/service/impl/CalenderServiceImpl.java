@@ -95,7 +95,6 @@ public class CalenderServiceImpl implements CalenderService{
 
 	private List<TimeSlot> fetchTimeSlots(List<UUID> calendarIds, LocalDateTime startPeriod,
 			LocalDateTime endPeriod, UUID timeSlotType) {
-		// Placeholder: Implement logic to fetch time slots based on calendarIds, period, and optionally timeSlotType
 		List<TimeSlot> timeSlots = new ArrayList<>();
 
 		try {

@@ -9,6 +9,14 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CalenderService {
 
+	/**
+	 * Get Functionality for finding the availability time 
+	 * @param calendarIds
+	 * @param duration
+	 * @param periodToSearch
+	 * @param timeSlotType
+	 * @return
+	 */
     public List<LocalDateTime> findAvailableTime(List<UUID> calendarIds, Integer duration, String periodToSearch, UUID timeSlotType) ;
 
 }
