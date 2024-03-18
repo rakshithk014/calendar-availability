@@ -1,6 +1,7 @@
 package com.example.Calender.service.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +18,7 @@ import com.example.Calender.model.Appointment;
 import com.example.Calender.model.Calendar;
 import com.example.Calender.model.TimeSlot;
 import com.example.Calender.service.CalenderService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -84,27 +86,54 @@ public class CalenderServiceImpl implements CalenderService{
 
 	private List<Appointment> fetchAppointments(List<UUID> calendarIds, LocalDateTime startPeriod, LocalDateTime endPeriod) {
 
+		List<Appointment> appointments = new ArrayList<>();
+		File file = new File("src/main/resources/jsonFiles/Danny boy.json");
+		
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			File file = new File("src/main/resources/Danny boy.json.");
-			return Arrays.asList(objectMapper.readValue(file, Appointment[].class));
+			JsonNode jsonNode = objectMapper.readTree(file);
+			JsonNode appointmentsNode = jsonNode.get("appointments");
+			if (appointmentsNode.isArray()) {
+			    for (JsonNode appointment : appointmentsNode) {
+					Appointment appt= new Appointment(); 
+					appt.setId(UUID.fromString(appointment.get("id").asText()));
+			        appt.setCalendarId(UUID.fromString(appointment.get("calendar_id").asText()));
+			        appt.setStart(LocalDateTime.parse(appointment.get("start").asText(), DateTimeFormatter.ISO_DATE_TIME));
+			        appt.setEnd(LocalDateTime.parse(appointment.get("end").asText(), DateTimeFormatter.ISO_DATE_TIME));
+			        appointments.add(appt);
+			    }
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ArrayList<>();
 		}
+		return appointments;
 	}
 
 	private List<TimeSlot> fetchTimeSlots(List<UUID> calendarIds, LocalDateTime startPeriod,
 			LocalDateTime endPeriod, UUID timeSlotType) {
 		List<TimeSlot> timeSlots = new ArrayList<>();
 
+		File file = new File("src/main/resources/jsonFiles/Danny boy.json");
+		
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			File file = new File("src/main/resources/Danny boy.json.");
-			timeSlots =  Arrays.asList(objectMapper.readValue(file, TimeSlot[].class));
+			JsonNode jsonNode = objectMapper.readTree(file);
+			JsonNode timeSlotNode = jsonNode.get("timeslots");
+			if (timeSlotNode.isArray()) {
+			    for (JsonNode slot : timeSlotNode) {
+			    	TimeSlot timeSlot= new TimeSlot(); 
+			    	timeSlot.setId(UUID.fromString(slot.get("id").asText()));
+					timeSlot.setCalendarId(UUID.fromString(slot.get("calendar_id").asText()));
+					timeSlot.setStart(LocalDateTime.parse(slot.get("start").asText(), DateTimeFormatter.ISO_DATE_TIME));
+					timeSlot.setEnd(LocalDateTime.parse(slot.get("end").asText(), DateTimeFormatter.ISO_DATE_TIME));
+					timeSlots.add(timeSlot);
+			    }
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
-			return new ArrayList<>();
 		}
-
 		return timeSlots;
 	}
 
